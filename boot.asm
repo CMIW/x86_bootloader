@@ -8,22 +8,19 @@ bits 16 ; Tells the assembler that we're working in 16-bit real mode.
 ; A, with offset B, the reconstructed physical address would be A*0x10 + B.
 
 ; The processor has a resgister for the data segment (ds). Since our code
-; resides at 0x07C0, we set the data segment (ds) to that address.
-; We have to load the segment into another register because we can't set it
-; directly in the segment register.
-mov ax, 0x07C0
-mov ds, ax
+; resides at 0x0700, we set the data segment (ds) to that address. We have to
+; load the segment into another register because we can't set it directly in the
+; segment register. The [org 0x7c00] directive sets the assembler location
+; counter and all the above.
+[org 0x7c00]
 
-; Since the bootloader extends from 0x07C0 for 512 bytes to 0x07E0, the stack
-; segment (ss), will be set to 0x07E0.
-mov ax, 0x07E0
-mov ss, ax
-
+; Setup Stack
 ; On x86 architectures, the stack pointer (sp) decreases. We must set the
 ; initial stack pointer (sp) to a number of bytes past the stack segment equal
-; to the desired size of the stack. Since the stack pointer (sp) can address 64k
-; of memory, let's make an 8k stack, by setting stack pointer (sp) to 0x2000.
-mov sp, 0x2000
+; to the desired size of the stack. We will place the bottom of the stack in
+; 0x9000 to make sure we are far away enough from our other boot loader related
+; memory to avoid collisions.
+mov sp, 0x9000
 mov sp, bp
 
 ; Prepare to print the message by clearing the screen.
@@ -43,6 +40,8 @@ add sp, 2
 cli
 hlt
 
+; All the needed instruction to print to the screen on 16bits Real Mode
+; are on this file
 %include "interrupts_print.asm"
 
 ; Define some data and store a pointer to its starting address. The 0 at the end
