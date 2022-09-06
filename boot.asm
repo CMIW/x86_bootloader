@@ -82,11 +82,8 @@ BOOT_DRIVE db 0
 msg_16b:
 db "16bit Real Mode", 0
 
-msg_32b:
-db "32bit Real Mode", 0
-
-; padding
-times 510 - ($-$$) db 0
-
-; magic number
-dw 0xaa55
+; The code in a bootsector has to be exactly 512 bytes, ending in 0xAA55.
+; pad the binary to a length of 510 bytes, and make sure the file ends with the
+; appropriate boot signature.
+times 510-($-$$) db 0
+dw 0xAA55
