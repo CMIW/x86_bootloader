@@ -14,13 +14,19 @@ bits 16 ; Tells the assembler that we're working in 16-bit real mode.
 ; counter and all the above.
 [org 0x7c00]
 
+; where to load the kernel to
+KERNEL_OFFSET equ 0x1000
+
+; BIOS sets boot drive in 'dl'; store for later use
+mov [BOOT_DRIVE], dl
+
 ; Setup Stack
 ; On x86 architectures, the stack pointer (sp) decreases. We must set the
 ; initial stack pointer (sp) to a number of bytes past the stack segment equal
 ; to the desired size of the stack. We will place the bottom of the stack in
 ; 0x9000 to make sure we are far away enough from our other boot loader related
 ; memory to avoid collisions.
-mov sp, 0x9000
+mov bp, 0x9000
 mov sp, bp
 
 ; Prepare to print the message by clearing the screen.
@@ -36,6 +42,12 @@ push msg_16b
 call print
 add sp, 2
 
+call load_kernel
+call switch_to_32bit
+
+; Learn how to print on 32 bit mode
+
+
 ; Tell the processor not to accept interrupts and to halt processing.
 cli
 hlt
@@ -44,14 +56,37 @@ hlt
 ; are on this file
 %include "interrupts_print.asm"
 
+%include "disk.asm"
+%include "switch_to_32bit.asm"
+%include "global_descriptor_table.asm"
+
+[bits 16]
+load_kernel:
+    mov bx, KERNEL_OFFSET ; bx -> destination
+    mov dh, 2             ; dh -> num sectors
+    mov dl, [BOOT_DRIVE]  ; dl -> disk
+    call disk_load
+    ret
+
+[bits 32]
+BEGIN_32BIT:
+    call KERNEL_OFFSET ; give control to the kernel
+    jmp $ ; loop in case kernel returns
+
+; boot drive variable
+BOOT_DRIVE db 0
+
 ; Define some data and store a pointer to its starting address. The 0 at the end
 ; terminates the string with a null character, so we'll know when the string is
 ; done. We can reference the address of this string with msg.
 msg_16b:
 db "16bit Real Mode", 0
 
-; The code in a bootsector has to be exactly 512 bytes, ending in 0xAA55.
-; pad the binary to a length of 510 bytes, and make sure the file ends with the
-; appropriate boot signature.
-times 510-($-$$) db 0
-dw 0xAA55
+msg_32b:
+db "32bit Real Mode", 0
+
+; padding
+times 510 - ($-$$) db 0
+
+; magic number
+dw 0xaa55
