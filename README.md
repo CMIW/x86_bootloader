@@ -7,7 +7,7 @@
 `nasm -f bin boot.asm -o boot.bin`
 
 ## Run
-`qemu-system-x86_64 -fds boot.bin`
+`qemu-system-x86_64 -fda boot.bin`
 
 ## Useful links
 * [Writing a Tiny x86 Bootloader](https://www.joe-bergeron.com/posts/Writing%20a%20Tiny%20x86%20Bootloader/)
