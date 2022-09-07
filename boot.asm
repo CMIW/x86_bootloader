@@ -35,12 +35,10 @@ call clearscreen
 ; Prepare to print the message by moving the cursor to position (0,0)
 push 0x0000
 call movecursor
-add sp, 2
 
 ; Print on the screen the message "16bit Real Mode"
 push msg_16b
 call print
-add sp, 2
 
 call load_kernel
 call switch_to_32bit
