@@ -21,6 +21,7 @@ To boot on an x86 machine, the Basic Input/Output System (BIOS) must read specif
 These 512 bytes contain the boot loader code, a partition table, the disk signature, and the appropriate boot signature 0xAA55 (the famous "magic number") that is checked to avoid accidentally loading something that is not supposed to be a boot sector.
 
 ## Boot Sector
+The code for the boot sector is on [boot.asm](/boot.asm)
 
 ## Useful links
 * [Writing a Tiny x86 Bootloader](https://www.joe-bergeron.com/posts/Writing%20a%20Tiny%20x86%20Bootloader/)
