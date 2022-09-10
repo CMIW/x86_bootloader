@@ -16,11 +16,9 @@
 
 
 ## Boot Process
-To boot on an x86 machine, the Basic Input/Output System (BIOS) must read specific sectors of data (usually 512 bytes in size), select a boot device, then copy the first sector from the device into physical memory, at the memory address 0x7C00.
+To boot on an x86 machine, the Basic Input/Output System (BIOS) must read specific sectors of data (usually 512 bytes in size), select a boot device, copy the first sector from the device into physical memory, at the memory address 0x7C00, then instructs the CPU to jump to the beginning of the boot loader code, memory address 0x7C00, passing control to the boot loader.
 
 These 512 bytes contain the boot loader code, a partition table, the disk signature, and the appropriate boot signature 0xAA55 (the famous "magic number") that is checked to avoid accidentally loading something that is not supposed to be a boot sector.
-
-The Basic Input/Output System (BIOS) then instructs the CPU to jump to the beginning of the boot loader code, memory address 0x7C00, passing control to the boot loader.
 
 ## Boot Sector
 
