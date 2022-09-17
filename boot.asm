@@ -30,10 +30,12 @@ mov bp, 0x9000
 mov sp, bp
 
 ; Prepare to print the message by clearing the screen.
-call clearscreen
+;call clearscreen
 
-; Prepare to print the message by moving the cursor to position (0,0)
-push 0x0000
+mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
+mov [cur_col], ax          ; Copy to current column
+mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
+mov [cur_row], ax
 call movecursor
 
 ; Print on the screen the message "16bit Real Mode"
@@ -57,28 +59,52 @@ hlt
 %include "disk.asm"
 %include "switch_to_32bit.asm"
 %include "global_descriptor_table.asm"
+%include "print.asm"
 
 [bits 16]
 load_kernel:
-    mov bx, KERNEL_OFFSET ; bx -> destination
-    mov dh, 2             ; dh -> num sectors
-    mov dl, [BOOT_DRIVE]  ; dl -> disk
-    call disk_load
-    ret
+  mov bx, KERNEL_OFFSET ; bx -> destination
+  mov dh, 2             ; dh -> num sectors
+  mov dl, [BOOT_DRIVE]  ; dl -> disk
+  call disk_load
+  ret
 
 [bits 32]
 BEGIN_32BIT:
-    call KERNEL_OFFSET ; give control to the kernel
-    jmp $ ; loop in case kernel returns
+  xor eax, eax
+  mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
+  mov [cur_col], eax          ; Copy to current column
+  mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
+  mov [cur_row], eax
+
+  mov ax, [0x44a]
+  mov [screen_width], eax
+
+  mov eax, 1
+  add [cur_row], eax
+  mov eax, 0
+  mov [cur_col], eax
+
+  call set_cursor
+
+  call KERNEL_OFFSET ; give control to the kernel
+  jmp $ ; loop in case kernel returns
 
 ; boot drive variable
 BOOT_DRIVE db 0
+
+cur_row:      dd 0x00
+cur_col:      dd 0x00
+screen_width: dd 0x00
 
 ; Define some data and store a pointer to its starting address. The 0 at the end
 ; terminates the string with a null character, so we'll know when the string is
 ; done. We can reference the address of this string with msg.
 msg_16b:
 db "16bit Real Mode", 0
+
+msg_32b:
+db "32bit Protected Mode", 0
 
 ; The code in a bootsector has to be exactly 512 bytes, ending in 0xAA55.
 ; pad the binary to a length of 510 bytes, and make sure the file ends with the

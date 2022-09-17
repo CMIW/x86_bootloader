@@ -43,9 +43,11 @@ movecursor:
   ; by 4 is that the contents of bp takes up 2 bytes on the stack, and the
   ; argument takes up 2 bytes, so we have to offset a total of 4 bytes from the
   ; actual address of bp.
-  mov dx, [bp+4]  ; get the argument from the stack. |bp| = 2, |arg| = 2
+  ;mov dx, [bp+4]  ; get the argument from the stack. |bp| = 2, |arg| = 2
   mov ah, 0x02  ; set cursor position
   mov bh, 0x00  ; page 0 because we're not using double-buffering
+  mov dh, [cur_row] ; set row
+  mov dl, [cur_col] ; set column
   int 0x10
 
   ; standard calling convention between caller and callee
