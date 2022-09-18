@@ -3,11 +3,8 @@
 ## Getting Started
 `apt-get install nasm qemu qemu-kvm`
 
-## Build
-`nasm -f bin boot.asm -o boot.bin`
-
-## Run
-`qemu-system-x86_64 -fda boot.bin`
+## Build and Run
+`make`
 
 ## Useful links
 * [Writing a Tiny x86 Bootloader](https://www.joe-bergeron.com/posts/Writing%20a%20Tiny%20x86%20Bootloader/)
@@ -19,3 +16,5 @@
 * [os-tutorial](https://github.com/cfenollosa/os-tutorial)
 
 * [Writing a Simple Operating System from Scratch](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
+
+* [asm current cursor location](https://stackoverflow.com/questions/53861895/assembly-32-bit-print-to-display-code-runs-on-qemu-fails-to-work-on-real-hardwa)

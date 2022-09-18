@@ -32,6 +32,10 @@ mov sp, bp
 ; Prepare to print the message by clearing the screen.
 ;call clearscreen
 
+; When the BIOS prints characters it updates the current row and column in the
+; BIOS Data Area (BDA). When in protected mode you can read the byte in memory
+; location 0x450 for the column and 0x451 for the row. You can use this
+; information to continue where the BIOS left off.
 mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
 mov [cur_col], ax          ; Copy to current column
 mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
