@@ -29,28 +29,8 @@ mov [BOOT_DRIVE], dl
 mov bp, 0x9000
 mov sp, bp
 
-; Prepare to print the message by clearing the screen.
-;call clearscreen
-
-; When the BIOS prints characters it updates the current row and column in the
-; BIOS Data Area (BDA). When in protected mode you can read the byte in memory
-; location 0x450 for the column and 0x451 for the row. You can use this
-; information to continue where the BIOS left off.
-mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
-mov [cur_col], ax          ; Copy to current column
-mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
-mov [cur_row], ax
-call set_cursor_rm
-
-; Print on the screen the message "16bit Real Mode"
-push msg_16b
-call print
-
 call load_kernel
 call switch_to_32bit
-
-; Learn how to print on 32 bit mode
-
 
 ; Tell the processor not to accept interrupts and to halt processing.
 cli
@@ -63,7 +43,6 @@ hlt
 %include "disk.asm"
 %include "switch_to_32bit.asm"
 %include "global_descriptor_table.asm"
-%include "print_pm.asm"
 
 [bits 16]
 load_kernel:
@@ -75,22 +54,6 @@ load_kernel:
 
 [bits 32]
 BEGIN_32BIT:
-  xor eax, eax
-  mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
-  mov [cur_col], eax          ; Copy to current column
-  mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
-  mov [cur_row], eax
-
-  mov ax, [0x44a]
-  mov [screen_width], eax
-
-  mov eax, 1
-  add [cur_row], eax
-  mov eax, 0
-  mov [cur_col], eax
-
-  call set_cursor_pm
-
   call KERNEL_OFFSET ; give control to the kernel
   jmp $ ; loop in case kernel returns
 
@@ -104,11 +67,7 @@ screen_width: dd 0x00
 ; Define some data and store a pointer to its starting address. The 0 at the end
 ; terminates the string with a null character, so we'll know when the string is
 ; done. We can reference the address of this string with msg.
-msg_16b:
-db "16bit Real Mode", 0
 
-msg_32b:
-db "32bit Protected Mode", 0
 
 ; The code in a bootsector has to be exactly 512 bytes, ending in 0xAA55.
 ; pad the binary to a length of 510 bytes, and make sure the file ends with the
