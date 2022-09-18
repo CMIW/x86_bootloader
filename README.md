@@ -1,6 +1,7 @@
 # Writing an x86 bootloader
 
 ### Index
+0. [What is a bootloader?](#what-is-a-bootloader?)
 1. [Boot Process](#boot-process)
 2. [Boot Sector](#boot-sector)
 0. [Useful links](#useful-links)
@@ -13,6 +14,9 @@
 
 ### FYI
 I'm running all this code on Linux, it doesn't matter the distro.
+
+## What is a bootloader?
+A bootloader is a small piece of software that plays a role in getting an operating system loaded and ready for execution when a computer is turned on.
 
 ## Boot Process
 To boot on an x86 machine, the Basic Input/Output System (BIOS) must read specific sectors of data (usually 512 bytes in size), select a boot device, copy the first sector from the device into physical memory, at the memory address 0x7C00, then instructs the CPU to jump to the beginning of the boot loader code, memory address 0x7C00, passing control to the boot loader.
@@ -40,3 +44,5 @@ carry on, unaware that they are running on a modern CPU.
 * [Writing a Simple Operating System from Scratch](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
 
 * [asm current cursor location](https://stackoverflow.com/questions/53861895/assembly-32-bit-print-to-display-code-runs-on-qemu-fails-to-work-on-real-hardwa)
+
+* [x86 Assembly/Bootloaders](https://en.m.wikibooks.org/wiki/X86_Assembly/Bootloaders)
