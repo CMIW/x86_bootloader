@@ -40,7 +40,7 @@ mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
 mov [cur_col], ax          ; Copy to current column
 mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
 mov [cur_row], ax
-call movecursor
+call set_cursor_rm
 
 ; Print on the screen the message "16bit Real Mode"
 push msg_16b
@@ -58,12 +58,12 @@ hlt
 
 ; All the needed instruction to print to the screen on 16bits Real Mode
 ; are on this file
-%include "interrupts_print.asm"
+%include "print_rm.asm"
 
 %include "disk.asm"
 %include "switch_to_32bit.asm"
 %include "global_descriptor_table.asm"
-%include "print.asm"
+%include "print_pm.asm"
 
 [bits 16]
 load_kernel:
@@ -89,7 +89,7 @@ BEGIN_32BIT:
   mov eax, 0
   mov [cur_col], eax
 
-  call set_cursor
+  call set_cursor_pm
 
   call KERNEL_OFFSET ; give control to the kernel
   jmp $ ; loop in case kernel returns

@@ -27,13 +27,19 @@ disk_load:
   ret
 
 disk_error:
-  ; Prepare to print the message by clearing the screen.
-  call clearscreen
+  ; Get the last cursor position from the BIOS
+  mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
+  mov [cur_col], eax          ; Copy to current column
+  mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
+  mov [cur_row], eax
 
-  ; Prepare to print the message by moving the cursor to position (0,0)
-  push 0x0000
-  call movecursor
-  add sp, 2
+  ; Prepare to print a message by moving the cursor to position (cur_row + 1, 0)
+  mov eax, 1
+  add [cur_row], eax
+  mov eax, 0
+  mov [cur_col], eax
+
+  call set_cursor_rm
 
   push msg_disk_error
   call print
@@ -42,13 +48,19 @@ disk_error:
   jmp disk_loop
 
 sectors_error:
-  ; Prepare to print the message by clearing the screen.
-  call clearscreen
+  ; Get the last cursor position from the BIOS
+  mov al, [0x450]             ; Byte at address 0x450 = last BIOS column position
+  mov [cur_col], eax          ; Copy to current column
+  mov al, [0x451]             ; Byte at address 0x451 = last BIOS row position
+  mov [cur_row], eax
 
-  ; Prepare to print the message by moving the cursor to position (0,0)
-  push 0x0000
-  call movecursor
-  add sp, 2
+  ; Prepare to print a message by moving the cursor to position (cur_row + 1, 0)
+  mov eax, 1
+  add [cur_row], eax
+  mov eax, 0
+  mov [cur_col], eax
+
+  call set_cursor_rm
 
   push msg_sectors_error
   call print

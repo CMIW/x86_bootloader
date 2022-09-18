@@ -33,7 +33,7 @@ clearscreen:
 ; (BIOS) allows you to draw to off-screen pages, in order to facilitate smoother
 ; visual transitions by rendering off-screen content before it is shown to the
 ; user. This is called double buffering. We'll just use the default page of 0.
-movecursor:
+set_cursor_rm:
   ; standard calling convention between caller and callee
   push bp ; we save the caller's base pointer (4 bytes)
   mov bp, sp ; update the base pointer with the new stack pointer

@@ -14,7 +14,7 @@ LF equ 0x0a    ; Line feed
 ; Inputs:   None
 ; Clobbers: EAX, ECX, EDX
 
-set_cursor:
+set_cursor_pm:
   mov ecx, [cur_row]  ; EAX = cur_row
   imul ecx, [screen_width]  ; ECX = cur_row * screen_width
   add ecx, [cur_col]  ; ECX = cur_row * screen_width + cur_col
