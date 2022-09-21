@@ -36,14 +36,6 @@ call switch_to_32bit
 cli
 hlt
 
-; All the needed instruction to print to the screen on 16bits Real Mode
-; are on this file
-%include "print_rm.asm"
-
-%include "disk.asm"
-%include "switch_to_32bit.asm"
-%include "global_descriptor_table.asm"
-
 [bits 16]
 load_kernel:
   mov bx, KERNEL_OFFSET ; bx -> destination
@@ -53,9 +45,18 @@ load_kernel:
   ret
 
 [bits 32]
+; This is where we arrive after switching to and initialising protected mode.
 BEGIN_32BIT:
   call KERNEL_OFFSET ; give control to the kernel
   jmp $ ; loop in case kernel returns
+
+; All the needed instruction to print to the screen on 16bits Real Mode
+; are on this file
+%include "print_rm.asm"
+
+%include "disk.asm"
+%include "switch_to_32bit.asm"
+%include "global_descriptor_table.asm"
 
 ; boot drive variable
 BOOT_DRIVE db 0
@@ -63,11 +64,6 @@ BOOT_DRIVE db 0
 cur_row:      dd 0x00
 cur_col:      dd 0x00
 screen_width: dd 0x00
-
-; Define some data and store a pointer to its starting address. The 0 at the end
-; terminates the string with a null character, so we'll know when the string is
-; done. We can reference the address of this string with msg.
-
 
 ; The code in a bootsector has to be exactly 512 bytes, ending in 0xAA55.
 ; pad the binary to a length of 510 bytes, and make sure the file ends with the
