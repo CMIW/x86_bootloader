@@ -1,12 +1,12 @@
-bits 16 ; Tells the assembler that we're working in 16-bit real mode.
-; x86 processors have a number of segment registers, which are used to store the
-; beginning of a 64k segment of memory. In real mode, memory is addressed using
-; a logical address, rather than the physical address. The logical address of a
-; piece of memory consists of the 64k segment it resides in, as well as its off-
-; set from the beginning of that segment. The 64k segment of a logical address
-; should be divided by 16, so, given a logical address beginning at 64k segment
-; A, with offset B, the reconstructed physical address would be A*0x10 + B.
-
+; Tells the assembler that we're working in 16-bit real mode. x86 processors
+; have a number of segment registers, which are used to store the beginning of
+; a 64k segment of memory. In real mode, memory is addressed using a logical
+; address, rather than the physical address. The logical address of a piece of
+; memory consists of the 64k segment it resides in, as well as its offset from
+; the beginning of that segment. The 64k segment of a logical address should be
+; divided by 16, so, given a logical address beginning at 64k segment A, with
+; offset B, the reconstructed physical address would be A*0x10 + B.
+bits 16
 ; The processor has a resgister for the data segment (ds). Since our code
 ; resides at 0x0700, we set the data segment (ds) to that address. We have to
 ; load the segment into another register because we can't set it directly in the
